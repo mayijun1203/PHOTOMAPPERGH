@@ -14,26 +14,29 @@
 
     </div>
     <!-- <img src="./img/IMG_0332.JPG" id="img1"> -->
-    <img src="https://raw.githubusercontent.com/mayijun1203/MLGH/master/opencv/economy.jpg" id="img1">
+    <img src="https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/img/IMG_0332.JPG" id="photo">
 
 
     <script>
-        var img1 = document.getElementById("img1");
-        EXIF.getData(img1, function () {
-            console.log(this.exifdata);
+        function ConvertDMSToDD(degrees, minutes, seconds, direction) {
+            var dd = degrees + (minutes / 60) + (seconds / 3600);
+            if (direction == "S" || direction == "W") {
+                dd = dd * -1;
+            }
+            return dd;
+        }
+
+        const photo = document.getElementById("photo");
+        EXIF.getData(photo, function () {
+            const photodata = this.exifdata;
+            console.log(ConvertDMSToDDphotodata['GPSLatitude']);
+
 
         });
 
+        https://awik.io/extract-gps-location-exif-data-photos-using-javascript/
 
-        // function testexif() {
-        //     var img1 = document.getElementById("img1");
-        //     EXIF.getData(img1, function () {
-        //         console.log(this.exifdata);
-
-        //     });
-        // };
-        // testexif();
-
+        
     </script>
 </body>
 
