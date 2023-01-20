@@ -5,38 +5,71 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
     <title>Document</title>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css' rel='stylesheet' />
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+
+        #mainmap {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 
 <body>
-    <div id='place'>
-
-    </div>
-    <!-- <img src="./img/IMG_0332.JPG" id="img1"> -->
-    <img src="https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/img/IMG_0332.JPG" id="photo">
-
+    <div class="container-fluid p-0" id="mainmap"> </div> <!-- placeholder for main map -->
 
     <script>
-        function ConvertDMSToDD(degrees, minutes, seconds, direction) {
-            var dd = degrees + (minutes / 60) + (seconds / 3600);
-            if (direction == "S" || direction == "W") {
-                dd = dd * -1;
-            }
-            return dd;
-        }
+        'use strict';
+        // Set MapBox token
+        mapboxgl.accessToken = 'pk.eyJ1IjoibWF5aWp1biIsImEiOiJjaXg4ZmlyY20wMDBjMm9tcjI0bjQ0Z21zIn0.Io0XJ4JelN903V9HGo4TfQ'; // still need to find a way to store the token
 
-        const photo = document.getElementById("photo");
-        EXIF.getData(photo, function () {
-            const photodata = this.exifdata;
-            console.log(ConvertDMSToDDphotodata['GPSLatitude']);
+
+        // Initialize the map
+        var map = new mapboxgl.Map({ // creating a new map
+            container: 'mainmap', // same as the div id to place the map
+            style: 'mapbox://styles/mapbox/light-v10', // light base map
+            hash: true, // make sure it's on to get the url with map view
+            preserveDrawingBuffer: true, // make sure it's on to allow printing
+            center: [119.655953, 29.093875], // testing to get the centroid of bounds
+            zoom: 9.5, // set the initial zoom of the map view
+        });
+
+
+        // Add layers
+        map.on('load', function () {
+
+            var layerContentList = []; // store all the layer contents
+
+            // Add full screen control
+            map.addControl(new mapboxgl.FullscreenControl({
+                container: document.querySelector('body'),
+            }),
+                'bottom-left', // control position
+            );
+
+            // Add navigation control
+            map.addControl(new mapboxgl.NavigationControl({
+                showCompass: true, // show compass
+                showZoom: true, // show zoom
+                visualizePitch: true, // show pitch
+            }),
+                'bottom-left', // control position
+            );
 
 
         });
-
-        https://awik.io/extract-gps-location-exif-data-photos-using-javascript/
-
-        
     </script>
 </body>
 
