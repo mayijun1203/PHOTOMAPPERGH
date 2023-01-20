@@ -42,7 +42,7 @@
             hash: true, // make sure it's on to get the url with map view
             preserveDrawingBuffer: true, // make sure it's on to allow printing
             center: [119.655953, 29.093875], // testing to get the centroid of bounds
-            zoom: 9.5, // set the initial zoom of the map view
+            zoom: 11, // set the initial zoom of the map view
         });
 
 
@@ -199,7 +199,7 @@
             // Add popup
             const popup = new mapboxgl.Popup({
                 closeButton: true, // close button
-                closeOnClick: false, // close if click on map
+                closeOnClick: true, // close if click on map
                 closeOnMove: false, // close if move the map
                 anchor: 'bottom', // anchor of the popup
                 offset: 0, // offset from the feature
@@ -213,6 +213,7 @@
                 var description = "<b>Photo ID: </b><span>" + e.features[0].properties.img + "</span><br>"; // description in the popup
                 description += "<b>Datetime: </b><span>"+e.features[0].properties.datetime+"</span><br>";
                 description += "<b>Bearing: </b><span>"+e.features[0].properties.bearing+"</span><br>";
+                description += "<img src=img/"+e.features[0].properties.img+" width=500rem>";
                 popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
             }
             map.on('click', 'unclustered', clickOnMap);
@@ -223,8 +224,6 @@
             map.on('mouseleave', 'unclustered', function () {
                 map.getCanvas().style.cursor = '';
             });
-
-
         });
     </script>
 </body>
