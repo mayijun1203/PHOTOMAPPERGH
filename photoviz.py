@@ -47,4 +47,4 @@ for i in os.listdir(path+'img'):
     df+=[imgcoords(i)]
 df=pd.concat(df,axis=0)
 df=gpd.GeoDataFrame(df,geometry=[shapely.geometry.Point(xy) for xy in zip(df['long'],df['lat'])],crs=4326)
-df.to_file(path+'test.geojson')
+df.to_file(path+'test.geojson',crs=4326)
