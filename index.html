@@ -22,7 +22,6 @@
             top: 0;
             bottom: 0;
             width: 100%;
-            height: auto;
         }
     </style>
 </head>
@@ -67,6 +66,59 @@
             }),
                 'bottom-left', // control position
             );
+
+
+            // Add points
+            // Set layer contents
+            var layerContent = {
+                'sourceid': 'ptsource', // source id
+                'sourcetype': 'geojson', // source type
+                'sourcedata': 'test.geojson', // data source
+                'layerid': 'ptlayer', // layer id
+                'layertype': 'circle', // symbology type
+                'layername': 'Point', // layer name for the legend
+                'layervisibility': 'visible', // visibility of the layer
+                'layerblur': 0, // blur circle
+                'layercolname': 'img', // category column name
+                'layercat': ['IMG_0332.JPG', 'IMG_0333.JPG', 'IMG_0334.JPG'], // categories
+                'layercolor': ['rgba(255,245,235,1)', 'rgba(254,210,166,1)', 'rgba(253,146,67,1)'], // color for each category; use rgba
+                'layersortkey': [5, 4, 3, 2, 1], // drawing orders; higher value on top
+                'layeropacity': 1, // circle opacity
+                'layerradius': { 'base': 2, 'stops': [[12, 4], [22, 180]] }, // circle radius; change size based on zoom level
+                'layerstrokecolor': 'rgb(255,255,255)', // circle stroke color
+                'layerstrokeopacity': 1, // circle stroke opacity
+                'layerstrokewidth': 0.5, // circle stroke width
+                'layerminzoom': 10, // only show if zoom in the certain level
+                'layeroutlinecolor': 'rgba(255,255,255,0)',  // outline color; for legend purpose only
+            };
+
+            // Add layer content to the overall layer content list
+            layerContentList.push(layerContent);
+
+            // Add data source
+            map.addSource(layerContent['sourceid'], {
+                'type': layerContent['sourcetype'],
+                'data': layerContent['sourcedata'],
+            });
+
+            // Add circle layer
+            map.addLayer({
+                'id': layerContent['layerid'],
+                'type': layerContent['layertype'],
+                'source': layerContent['sourceid'],
+                'layout': {
+                    'visibility': layerContent['layervisibility'],
+                },
+                'paint': {
+                    'circle-blur': layerContent['layerblur'],
+                    'circle-color': 'rgba(255,245,235,1)',
+                    'circle-opacity': layerContent['layeropacity'],
+                    'circle-radius': layerContent['layerradius'],
+                    'circle-stroke-color': layerContent['layerstrokecolor'],
+                    'circle-stroke-opacity': layerContent['layerstrokeopacity'],
+                    'circle-stroke-width': layerContent['layerstrokewidth'],
+                },
+            });
 
 
         });
