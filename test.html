@@ -226,9 +226,9 @@
                             zoom: 17,
                         });
                         const coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
-                        var description = "<b>Photo ID: </b><span>" + e.features[0].properties.img + "</span><br>"; // description in the popup
+                        var description = "<b>Photo: </b><span>" + e.features[0].properties.img + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
-                        description += "<a target='_blank' href='" + e.features[0].properties.img + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.img + "' width=300rem>"
+                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.img + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.img + "' width=300rem>"
                         popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
                     }
                     map.on('click', 'unclustered', clickOnMap);
