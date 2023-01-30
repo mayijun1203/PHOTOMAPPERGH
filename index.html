@@ -9,6 +9,9 @@
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css' rel='stylesheet' />
+    <script src="https://cdn.jsdelivr.net/npm/mapboxgl-spiderifier@1.0.10/index.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/mapboxgl-spiderifier@1.0.10/index.min.css" rel="stylesheet">
+    </link>
 
     <style>
         body {
@@ -83,7 +86,7 @@
                         'sourcetype': 'geojson', // source type
                         'sourcedata': 'photoviz.geojson', // data source
                         'cluster': true, // whether enable clustering
-                        'clustermaxzoom': 18, // max zoom level for clustering
+                        'clustermaxzoom': 22, // max zoom level for clustering
                         'clusterradius': 50, // radius of clusters
                         'unclusteredid': 'unclustered', // layer id
                         'unclusteredtype': 'symbol', // symbology type
@@ -176,20 +179,25 @@
 
                     // Click on a cluster
                     map.on('click', 'clustered', (e) => {
-                        const features = map.queryRenderedFeatures(e.point, {
-                            layers: ['clustered'],
-                        });
-                        const clusterId = features[0].properties.cluster_id;
-                        map.getSource('ptsource').getClusterExpansionZoom(
-                            clusterId,
-                            (err, zoom) => {
-                                if (err) return;
-                                map.easeTo({
-                                    center: features[0].geometry.coordinates,
-                                    zoom: zoom,
-                                });
-                            }
-                        );
+                        if (map.getZoom() <= 18) {
+                            const features = map.queryRenderedFeatures(e.point, {
+                                layers: ['clustered'],
+                            });
+                            const clusterId = features[0].properties.cluster_id;
+                            map.getSource('ptsource').getClusterExpansionZoom(
+                                clusterId,
+                                (err, zoom) => {
+                                    if (err) return;
+                                    map.easeTo({
+                                        center: features[0].geometry.coordinates,
+                                        zoom: zoom,
+                                    });
+                                }
+                            );
+                        } else {
+                            console.log(map.getZoom());
+                            
+                        };
                     });
                     // Add hover events
                     map.on('mouseenter', 'clustered', () => {
@@ -215,12 +223,11 @@
                     function clickOnMap(e) {
                         map.easeTo({
                             center: [e.features[0].geometry.coordinates[0], e.features[0].geometry.coordinates[1] + 0.0003],
-                            zoom: 18,
+                            zoom: 17,
                         });
                         const coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
                         var description = "<b>Photo ID: </b><span>" + e.features[0].properties.img + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
-                        description += "<b>Bearing: </b><span>" + e.features[0].properties.bearing + "</span><br>";
                         description += "<a target='_blank' href='" + e.features[0].properties.img + "'><img src=img/" + e.features[0].properties.img + " width=300rem>"
                         popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
                     }
