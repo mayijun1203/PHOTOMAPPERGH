@@ -4,7 +4,8 @@ import shapely
 import exif
 import os
 
-path='C:/Users/MaY8/Desktop/GITHUB/PHOTOVIZGH/'
+# path='C:/Users/MaY8/Desktop/GITHUB/PHOTOVIZGH/'
+path=os.gecwd()
 pd.options.display.max_columns=100
 
 # imgpath=path+'img/IMG_0333.JPG'
@@ -47,4 +48,4 @@ for i in os.listdir(path+'img'):
     df+=[imgcoords(i)]
 df=pd.concat(df,axis=0)
 df=gpd.GeoDataFrame(df,geometry=[shapely.geometry.Point(xy) for xy in zip(df['long'],df['lat'])],crs=4326)
-df.to_file(path+'test.geojson',crs=4326)
+df.to_file(path+'photoviz.geojson',crs=4326)

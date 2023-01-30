@@ -73,19 +73,19 @@
             const layerContent = {
                 'sourceid': 'ptsource', // source id
                 'sourcetype': 'geojson', // source type
-                'sourcedata': 'test.geojson', // data source
+                'sourcedata': 'photoviz.geojson', // data source
                 'cluster': true, // whether enable clustering
                 'clustermaxzoom': 14, // max zoom level for clustering
                 'clusterradius': 50, // radius of clusters
                 'unclusteredid': 'unclustered', // layer id
-                'unclusteredtype': 'circle', // symbology type
+                'unclusteredtype': 'symbol', // symbology type
                 'unclusteredvisibility': 'visible', // visibility of the layer
+                'unclusterediconimage': '', // icon image
                 'unclusteredcolor': 'rgba(255,0,0,1)', // color for each category; use rgba
                 'unclusteredopacity': 1, // circle opacity
                 'unclusteredradius': { 'base': 2, 'stops': [[12, 4], [22, 180]] }, // circle radius; change size based on zoom level
-                'unclusteredstrokecolor': 'rgb(255,255,255)', // circle stroke color
-                'unclusteredstrokeopacity': 1, // circle stroke opacity
-                'unclusteredstrokewidth': 0, // circle stroke width
+                'unclusteredhalocolor': 'rgb(255,255,255)', // circle stroke color
+                'unclusteredhalowidth': 0, // circle stroke width
                 'unclusteredoutlinecolor': 'rgba(255,255,255,0)',  // outline color; for legend purpose only
                 'clusteredid': 'clustered', // layer id
                 'clusteredtype': 'circle', // symbology type
@@ -126,13 +126,15 @@
                 'layout': {
                     'visibility': layerContent['unclusteredvisibility'],
                 },
+                'layout': {
+                    'icon-image': 'icon.png',
+                    'icon-size':100,
+                },
                 'paint': {
-                    'circle-color': layerContent['unclusteredcolor'],
-                    'circle-opacity': layerContent['unclusteredopacity'],
-                    'circle-radius': layerContent['unclusteredradius'],
-                    'circle-stroke-color': layerContent['unclusteredstrokecolor'],
-                    'circle-stroke-opacity': layerContent['unclusteredstrokeopacity'],
-                    'circle-stroke-width': layerContent['unclusteredstrokewidth'],
+                    'icon-color': layerContent['unclusteredcolor'],
+                    'icon-opacity': layerContent['unclusteredopacity'],
+                    'icon-halo-color': layerContent['unclusteredhalocolor'],
+                    'icon-halo-width': layerContent['unclusteredhalowidth'],
                 },
             });
 
@@ -209,11 +211,12 @@
             // Add unclustered popup
             // Add click event
             function clickOnMap(e) {
+                console.log(e.features);
                 const coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
                 var description = "<b>Photo ID: </b><span>" + e.features[0].properties.img + "</span><br>"; // description in the popup
-                description += "<b>Datetime: </b><span>"+e.features[0].properties.datetime+"</span><br>";
-                description += "<b>Bearing: </b><span>"+e.features[0].properties.bearing+"</span><br>";
-                description += "<img src=img/"+e.features[0].properties.img+" width=500rem>";
+                description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
+                description += "<b>Bearing: </b><span>" + e.features[0].properties.bearing + "</span><br>";
+                description += "<a target='_blank' href='" + e.features[0].properties.img + "'><img src=img/" + e.features[0].properties.img + " width=300rem>"
                 popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
             }
             map.on('click', 'unclustered', clickOnMap);
