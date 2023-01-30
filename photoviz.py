@@ -4,8 +4,9 @@ import shapely
 import exif
 import os
 
+# path=os.gecwd()
 # path='C:/Users/MaY8/Desktop/GITHUB/PHOTOVIZGH/'
-path=os.gecwd()
+path='C:/Users/mayij/Desktop/DOC/GITHUB/PHOTOVIZGH/'
 pd.options.display.max_columns=100
 
 # imgpath=path+'img/IMG_0333.JPG'
@@ -21,7 +22,7 @@ def decimalcoords(orgcoords,ref):
     return decimaldegrees
 
 def imgcoords(imgpath):
-    with open(path+'img/'+imgpath,'rb') as src:
+    with open(path+'original/'+imgpath,'rb') as src:
         img=exif.Image(src)
     if img.has_exif:
         try:
@@ -34,7 +35,7 @@ def imgcoords(imgpath):
             print(imgpath+' No Coordinates!')
     else:
         print(imgpath+' No EXIF!')
-    tp=pd.DataFrame({'img':[imgpath],
+    tp=pd.DataFrame({'photo':[imgpath],
                      'datetime':[img.datetime_original],
                      'lat':[coords[0]],
                      'long':[coords[1]],
@@ -44,8 +45,8 @@ def imgcoords(imgpath):
 
 
 df=[]
-for i in os.listdir(path+'img'):
+for i in os.listdir(path+'original'):
     df+=[imgcoords(i)]
 df=pd.concat(df,axis=0)
 df=gpd.GeoDataFrame(df,geometry=[shapely.geometry.Point(xy) for xy in zip(df['long'],df['lat'])],crs=4326)
-df.to_file(path+'photoviz.geojson',crs=4326)
+df.to_file(path+'photoattr.geojson',crs=4326, driver='GeoJSON')
