@@ -50,6 +50,11 @@
             zoom: 11, // set the initial zoom of the map view
         });
 
+        // Auto fitting to the bounds
+        fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson')
+            .then((response) => response.json())
+            .then((data) => map.fitBounds(turf.bbox(data), { padding: 100 }));
+
 
         // Add layers
         map.on('load', function () {
@@ -235,10 +240,10 @@
                     // Add unclustered popup
                     // Add click event
                     function clickOnMap(e) {
-                        // map.easeTo({
-                        //     center: [e.features[0].geometry.coordinates[0], e.features[0].geometry.coordinates[1] + 0.0003],
-                        //     zoom: 17,
-                        // });
+                        map.easeTo({
+                            center: [e.features[0].geometry.coordinates[0], e.features[0].geometry.coordinates[1] + 0.0003],
+                            zoom: 18,
+                        });
                         const coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
                         var description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
@@ -253,36 +258,6 @@
                     map.on('mouseleave', 'unclustered', function () {
                         map.getCanvas().style.cursor = '';
                     });
-
-                    // Auto zoom
-                    fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson').then(response => {
-                        return response.json();
-                    }).then(data => {
-                        console.log(data);
-                        const t = turf.bbox({
-                            type: 'featureCollection',
-                            features: data,
-                        });
-                        console.log(t);
-                    }).catch(err => {
-                        // Do something for an error here
-                    });
-
-                    // var f = map.getSource('ptsource');
-                    // console.log(f)
-                    // const t = turf.bbox({
-                    //     type: 'geojson',
-                    //     features: f
-                    // });
-                    // console.log(t)
-
-                    // const bbox=turf.bbox('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson');
-                    // console.log(bbox)
-
-                    //         // map.easeTo({
-                    //         //     center: features[0].geometry.coordinates,
-                    //         //     zoom: zoom,
-                    //         // });
                 });
         });
 

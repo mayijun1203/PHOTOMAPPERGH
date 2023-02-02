@@ -9,10 +9,9 @@
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/mapboxgl-spiderifier@1.0.10/index.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/mapboxgl-spiderifier@1.0.10/index.min.css" rel="stylesheet">
-    </link>
-    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
     <style>
         body {
@@ -38,10 +37,11 @@
         // Set MapBox token
         mapboxgl.accessToken = 'pk.eyJ1IjoibWF5aWp1biIsImEiOiJjaXg4ZmlyY20wMDBjMm9tcjI0bjQ0Z21zIn0.Io0XJ4JelN903V9HGo4TfQ'; // still need to find a way to store the token
 
- 
+
         // Initialize the map
         const map = new mapboxgl.Map({ // creating a new map
             container: 'mainmap', // same as the div id to place the map
+            maxZoom: 20, // max zoom levl
             style: 'mapbox://styles/mapbox/light-v10', // light base map
             hash: true, // make sure it's on to get the url with map view
             preserveDrawingBuffer: true, // make sure it's on to allow printing
@@ -92,18 +92,20 @@
                         'sourcetype': 'geojson', // source type
                         'sourcedata': 'https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson', // data source
                         'cluster': true, // whether enable clustering
-                        'clustermaxzoom': 22, // max zoom level for clustering
-                        'clusterradius': 50, // radius of clusters
+                        'clustermaxzoom': 20, // max zoom level for clustering
+                        'clusterradius': 20, // radius of clusters
                         'unclusteredid': 'unclustered', // layer id
                         'unclusteredtype': 'symbol', // symbology type
                         'unclusteredvisibility': 'visible', // visibility of the layer
-                        'unclusteredopacity': 1, // circle opacity
-                        'unclusteredsize': 0.07, // circle radius; change size based on zoom level
+                        'unclusteredoverlap': true, // icon allow overlap
+                        'unclusteredopacity': 1, // icon opacity
+                        'unclusteredsize': 0.07, // icon radius
+                        'unclusteredrotate': ['get', 'bearing'], // icon rotate
                         'unclusteredoutlinecolor': 'rgba(255,255,255,0)',  // outline color; for legend purpose only
                         'clusteredid': 'clustered', // layer id
                         'clusteredtype': 'circle', // symbology type
                         'clusteredvisibility': 'visible', // visibility of the layer
-                        'clusteredcolor': ['step', ['get', 'point_count'], '#51bbd6', 1, '#f1f075', 3, '#f28cb1'], // color for each category; use rgba
+                        'clusteredcolor': ['step', ['get', 'point_count'], '#ffcd03', 5, '#a3cf62', 10, '#00a9a5'], // color for each category; use rgba
                         'clusteredopacity': 1, // circle opacity
                         'clusteredradius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40], // circle radius; change size based on point counts
                         'clusteredstrokecolor': 'rgb(255,255,255)', // circle stroke color
@@ -113,6 +115,7 @@
                         'clusterlabelid': 'clusterlabel',
                         'clusterlabeltype': 'symbol', // symbology type
                         'clusterlabelvisibility': 'visible', // visibility of the layer
+                        'clusterlabeloverlap': true, // text allow overlap
                         'clusterlabeltextfield': ['get', 'point_count_abbreviated'], // text for the cluster label
                         'clusterlabeltextfont': ['Open Sans Semibold', 'Arial Unicode MS Bold'], // text font for the cluster label
                         'clusterlabeltextsize': 14, // text size for the cluster label
@@ -128,23 +131,6 @@
                         'cluster': layerContent['cluster'],
                         'clusterMaxZoom': layerContent['clustermaxzoom'],
                         'clusterRadius': layerContent['clusterradius'],
-                    });
-
-                    // Add unclustered circle layer
-                    map.addLayer({
-                        'id': layerContent['unclusteredid'],
-                        'type': layerContent['unclusteredtype'],
-                        'source': layerContent['sourceid'],
-                        'filter': ['!', ['has', 'point_count']],
-                        'layout': {
-                            'visibility': layerContent['unclusteredvisibility'],
-                            'icon-image': 'dirarrow',
-                            'icon-size': layerContent['unclusteredsize'],
-                            'icon-rotate': ['get', 'bearing'],
-                        },
-                        'paint': {
-                            'icon-opacity': layerContent['unclusteredopacity'],
-                        },
                     });
 
                     // Add clustered circle layer
@@ -174,16 +160,35 @@
                         'filter': ['has', 'point_count'],
                         'layout': {
                             'visibility': layerContent['clusterlabelvisibility'],
+                            'text-allow-overlap': layerContent['clusterlabeloverlap'],
                             'text-field': layerContent['clusterlabeltextfield'],
                             'text-font': layerContent['clusterlabeltextfont'],
                             'text-size': layerContent['clusterlabeltextsize'],
                         },
                     });
 
+                    // Add unclustered circle layer
+                    map.addLayer({
+                        'id': layerContent['unclusteredid'],
+                        'type': layerContent['unclusteredtype'],
+                        'source': layerContent['sourceid'],
+                        'filter': ['!', ['has', 'point_count']],
+                        'layout': {
+                            'visibility': layerContent['unclusteredvisibility'],
+                            'icon-allow-overlap': layerContent['unclusteredoverlap'],
+                            'icon-image': 'dirarrow',
+                            'icon-size': layerContent['unclusteredsize'],
+                            'icon-rotate': layerContent['unclusteredrotate'],
+                        },
+                        'paint': {
+                            'icon-opacity': layerContent['unclusteredopacity'],
+                        },
+                    });
+
 
                     // Click on a cluster
                     map.on('click', 'clustered', (e) => {
-                        if (map.getZoom() <= 18) {
+                        if (map.getZoom() < 20) {
                             const features = map.queryRenderedFeatures(e.point, {
                                 layers: ['clustered'],
                             });
@@ -199,8 +204,17 @@
                                 }
                             );
                         } else {
-                            console.log(map.getZoom());
-
+                            const features = map.queryRenderedFeatures(e.point, {
+                                layers: ['clustered'],
+                            });
+                            const clusterId = features[0].properties.cluster_id;
+                            map.getSource('ptsource').getClusterChildren(
+                                clusterId,
+                                (err, children) => {
+                                    if (err) return;
+                                    console.log(children)
+                                }
+                            );
                         };
                     });
                     // Add hover events
@@ -227,10 +241,10 @@
                     function clickOnMap(e) {
                         map.easeTo({
                             center: [e.features[0].geometry.coordinates[0], e.features[0].geometry.coordinates[1] + 0.0003],
-                            zoom: 17,
+                            zoom: 18,
                         });
                         const coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
-                        var description = "<b>Photo: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
+                        var description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
                         description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>"
                         popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
@@ -245,6 +259,10 @@
                     });
                 });
         });
+
+
+
+
     </script>
 </body>
 
