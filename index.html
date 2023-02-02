@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mapboxgl-spiderifier@1.0.10/index.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/mapboxgl-spiderifier@1.0.10/index.min.css" rel="stylesheet">
     </link>
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
 
     <style>
         body {
@@ -85,7 +86,7 @@
                     const layerContent = {
                         'sourceid': 'ptsource', // source id
                         'sourcetype': 'geojson', // source type
-                        'sourcedata': 'photoviz.geojson', // data source
+                        'sourcedata': 'https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson', // data source
                         'cluster': true, // whether enable clustering
                         'clustermaxzoom': 20, // max zoom level for clustering
                         'clusterradius': 20, // radius of clusters
@@ -239,9 +240,9 @@
                         //     zoom: 17,
                         // });
                         const coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
-                        var description = "<b>Photo ID: </b><span>" + e.features[0].properties.img + "</span><br>"; // description in the popup
+                        var description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
-                        description += "<a target='_blank' href='" + e.features[0].properties.img + "'><img src=img/" + e.features[0].properties.img + " width=300rem>"
+                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>"
                         popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
                     }
                     map.on('click', 'unclustered', clickOnMap);
@@ -252,8 +253,42 @@
                     map.on('mouseleave', 'unclustered', function () {
                         map.getCanvas().style.cursor = '';
                     });
+
+                    // Auto zoom
+                    fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson').then(response => {
+                        return response.json();
+                    }).then(data => {
+                        console.log(data);
+                        const t = turf.bbox({
+                            type: 'featureCollection',
+                            features: data,
+                        });
+                        console.log(t);
+                    }).catch(err => {
+                        // Do something for an error here
+                    });
+
+                    // var f = map.getSource('ptsource');
+                    // console.log(f)
+                    // const t = turf.bbox({
+                    //     type: 'geojson',
+                    //     features: f
+                    // });
+                    // console.log(t)
+
+                    // const bbox=turf.bbox('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson');
+                    // console.log(bbox)
+
+                    //         // map.easeTo({
+                    //         //     center: features[0].geometry.coordinates,
+                    //         //     zoom: zoom,
+                    //         // });
                 });
         });
+
+
+
+
     </script>
 </body>
 
