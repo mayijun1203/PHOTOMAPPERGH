@@ -212,33 +212,14 @@
                                         closeOnClick: true, // close if click on map
                                         closeOnMove: false, // close if move the map
                                         anchor: 'bottom', // anchor of the popup
-                                        offset: 0, // offset from the feature
                                         maxWidth: 'none', // max width of the popoup; 'none' to fit to the content                
-                                        offset: MapboxglSpiderifier.popupOffsetForSpiderLeg(spiderLeg)
+                                        offset: MapboxglSpiderifier.popupOffsetForSpiderLeg(spiderLeg),
                                     });
-                                    spiderpopup.setHTML('testing'+spiderLeg);
+                                    let description = "<b>Photo ID: </b><span>" + spiderLeg.feature.photo + "</span><br>"; // description in the popup
+                                    description += "<b>Datetime: </b><span>" + spiderLeg.feature.datetime + "</span><br>";
+                                    description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "' width=300rem>";
+                                    spiderpopup.setHTML(description);
                                     spiderLeg.mapboxMarker.setPopup(spiderpopup);
-
-                                    // // Add click event
-                                    // function clickOnMap(e) {
-                                    //     map.easeTo({
-                                    //         center: [e.features[0].geometry.coordinates[0], e.features[0].geometry.coordinates[1] + 0.0003],
-                                    //         zoom: 18,
-                                    //     });
-                                    //     let coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
-                                    //     let description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
-                                    //     description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
-                                    //     description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>"
-                                    //     popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
-                                    // }
-                                    // map.on('click', 'unclustered', clickOnMap);
-                                    // // Add hover events
-                                    // map.on('mouseenter', 'unclustered', function () {
-                                    //     map.getCanvas().style.cursor = 'pointer'; // mouse becoming pointer
-                                    // });
-                                    // map.on('mouseleave', 'unclustered', function () {
-                                    //     map.getCanvas().style.cursor = '';
-                                    // });
                                 }
                             });
                             spiderifier.unspiderfy();
@@ -258,6 +239,15 @@
                                     spiderifier.spiderfy(features[0].geometry.coordinates, markers);
                                 }
                             );
+
+                            // //unspiderfy when zoom out
+                            // map.on('click', (e) => {
+                            //     let features = map.queryRenderedFeatures(e.point, {
+                            //         layers: ['clustered','unclustered'],
+                            //     });
+                            //     console.log(features);
+                            //     // spiderifier.unspiderfy();
+                            // })
                         };
                     });
                     // Add hover events
@@ -289,7 +279,7 @@
                         let coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
                         let description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
-                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>"
+                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>";
                         popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
                     }
                     map.on('click', 'unclustered', clickOnMap);
