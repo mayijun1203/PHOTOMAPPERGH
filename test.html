@@ -28,14 +28,27 @@
         }
 
         .spiderpin {
-            position: relative;
-            width: 1rem;
+            /* position: relative;
+            width: 2rem;
             height: 1.168rem;
             margin-left: -0.44rem;
             margin-top: -0.55rem;
             background-image: url("https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/icon.png");
             background-size: 1rem 1.168rem;
             background-repeat: no-repeat;
+            background-color: white;
+            z-index: 1000; */
+
+            position: relative;
+            width: 20.2px;
+            height: 23.6px;
+            margin-left: -10.1px;
+            margin-top: -11.8px;
+            background-image: url("https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/icon.png");
+            background-size: 20.2px 23.6px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: green;
         }
     </style>
 </head>
@@ -52,7 +65,7 @@
         // Initialize the map
         const map = new mapboxgl.Map({ // creating a new map
             container: 'mainmap', // same as the div id to place the map
-            maxZoom: 18, // max zoom levl
+            maxZoom: 22, // max zoom levl
             style: 'mapbox://styles/mapbox/light-v10', // light base map
             hash: true, // make sure it's on to get the url with map view
             preserveDrawingBuffer: true, // make sure it's on to allow printing
@@ -103,7 +116,7 @@
                         'sourceType': 'geojson', // source type
                         'sourceData': 'https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson', // data source
                         'cluster': true, // whether enable clustering
-                        'clusterMaxZoom': 18, // max zoom level for clustering
+                        'clusterMaxZoom': 22, // max zoom level for clustering
                         'clusterRadius': 20, // radius of clusters
                         'unclusteredId': 'unclustered', // layer id
                         'unclusteredType': 'symbol', // symbology type
@@ -199,11 +212,12 @@
 
                     // Click on a cluster
                     map.on('click', 'clustered', (e) => {
-                        if (map.getZoom() < 18) {
+                        if (map.getZoom() < 19) {
                             let features = map.queryRenderedFeatures(e.point, {
                                 layers: ['clustered'],
                             });
                             let clusterId = features[0].properties.cluster_id;
+                            console.log(clusterId);
                             map.getSource('photoattr').getClusterExpansionZoom(
                                 clusterId,
                                 (err, zoom) => {
@@ -212,60 +226,7 @@
                                         center: features[0].geometry.coordinates,
                                         zoom: zoom,
                                     });
-                                }
-                            );
-                        } else {
-                            let spiderifier = new MapboxglSpiderifier(map, {
-                                circleSpiralSwitchover: 9,
-                                initializeLeg: function (spiderLeg) {
-                                    // Customize pin
-                                    let spiderPin = spiderLeg.elements.pin;
-                                    spiderPin.className = 'spiderpin';
-                                    spiderPin.style.transform = 'rotate(' + spiderLeg.feature.bearing + 'deg)';
-
-                                    // Add popup
-                                    let spiderPopup = new mapboxgl.Popup({
-                                        closeButton: true, // close button
-                                        closeOnClick: true, // close if click on map
-                                        closeOnMove: false, // close if move the map
-                                        anchor: 'bottom', // anchor of the popup
-                                        maxWidth: 'none', // max width of the popoup; 'none' to fit to the content                
-                                        offset: MapboxglSpiderifier.popupOffsetForSpiderLeg(spiderLeg),
-                                    });
-                                    let description = "<b>Photo ID: </b><span>" + spiderLeg.feature.photo + "</span><br>"; // description in the popup
-                                    description += "<b>Datetime: </b><span>" + spiderLeg.feature.datetime + "</span><br>";
-                                    description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "' width=300rem>";
-                                    spiderPopup.setHTML(description);
-                                    spiderLeg.mapboxMarker.setPopup(spiderPopup);
-
-                                    // Unspiderfy if zoomed with no popup opened
-                                    map.on('zoom', () => {
-                                        if (document.getElementsByClassName('mapboxgl-popup-content').length == 0) {
-                                            spiderifier.unspiderfy();
-                                        };
-                                    });
-
-                                    // Unspiderfy if clustered or unclustered clicked
-                                    map.on('click', ['clustered', 'unclustered'], () => {
-                                        spiderifier.unspiderfy();
-                                    });
                                 },
-                            });
-
-                            let features = map.queryRenderedFeatures(e.point, {
-                                layers: ['clustered'],
-                            });
-                            let clusterId = features[0].properties.cluster_id;
-                            map.getSource('photoattr').getClusterLeaves(
-                                clusterId, 100, 0,
-                                (err, leaves) => {
-                                    if (err) return;
-                                    let markers = [];
-                                    for (let i = 0; i < leaves.length; i++) {
-                                        markers.push(leaves[i].properties);
-                                    };
-                                    spiderifier.spiderfy(features[0].geometry.coordinates, markers);
-                                }
                             );
                         };
                     });
@@ -275,6 +236,62 @@
                     });
                     map.on('mouseleave', 'clustered', () => {
                         map.getCanvas().style.cursor = '';
+                    });
+
+
+
+
+
+                    // Unspiderfy if zoomed with no popup opened
+                    map.on('zoom', () => {
+                        const boxes = Array.from(document.getElementsByClassName('spider-leg-container'));
+                        boxes.forEach(box => {
+                            box.remove();
+                        });
+                        if (map.getZoom() > 17) {
+                            let features = map.queryRenderedFeatures({
+                                layers: ['clustered'],
+                            });
+                            for (let i = 0; i < features.length; i++) {
+                                let spiderifier = new MapboxglSpiderifier(map, {
+                                    circleSpiralSwitchover: 9,
+                                    initializeLeg: function (spiderLeg) {
+                                        // Customize pin
+                                        let spiderPin = spiderLeg.elements.pin;
+                                        spiderPin.className = 'spiderpin';
+                                        spiderPin.style.transform = 'rotate(' + spiderLeg.feature.bearing + 'deg)';
+
+                                        // Add popup
+                                        let spiderPopup = new mapboxgl.Popup({
+                                            closeButton: true, // close button
+                                            closeOnClick: true, // close if click on map
+                                            closeOnMove: false, // close if move the map
+                                            anchor: 'bottom', // anchor of the popup
+                                            maxWidth: 'none', // max width of the popoup; 'none' to fit to the content                
+                                            offset: MapboxglSpiderifier.popupOffsetForSpiderLeg(spiderLeg),
+                                        });
+                                        let description = "<b>Photo ID: </b><span>" + spiderLeg.feature.photo + "</span><br>"; // description in the popup
+                                        description += "<b>Datetime: </b><span>" + spiderLeg.feature.datetime + "</span><br>";
+                                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "' width=300rem>";
+                                        spiderPopup.setHTML(description);
+                                        spiderLeg.mapboxMarker.setPopup(spiderPopup);
+                                    },
+                                });
+
+                                let clusterId = features[i].properties.cluster_id;
+                                map.getSource('photoattr').getClusterLeaves(
+                                    clusterId, 100, 0,
+                                    (err, leaves) => {
+                                        if (err) return;
+                                        let markers = [];
+                                        for (let i = 0; i < leaves.length; i++) {
+                                            markers.push(leaves[i].properties);
+                                        };
+                                        spiderifier.spiderfy(features[i].geometry.coordinates, markers);
+                                    }
+                                );
+                            };
+                        };
                     });
 
 
