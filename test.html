@@ -41,7 +41,7 @@
         // Initialize the map
         const map = new mapboxgl.Map({ // creating a new map
             container: 'mainmap', // same as the div id to place the map
-            maxZoom: 20, // max zoom levl
+            maxZoom: 22, // max zoom levl
             style: 'mapbox://styles/mapbox/light-v10', // light base map
             hash: true, // make sure it's on to get the url with map view
             preserveDrawingBuffer: true, // make sure it's on to allow printing
@@ -63,7 +63,7 @@
                     if (error) throw error;
 
                     // Add the image to the map style.
-                    map.addImage('dirarrow', image);
+                    map.addImage('dirArrow', image);
 
 
                     const layerContentList = []; // store all the layer contents
@@ -88,112 +88,112 @@
                     // Add points
                     // Set layer contents
                     const layerContent = {
-                        'sourceid': 'ptsource', // source id
-                        'sourcetype': 'geojson', // source type
-                        'sourcedata': 'https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson', // data source
+                        'sourceId': 'photoattr', // source id
+                        'sourceType': 'geojson', // source type
+                        'sourceData': 'https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson', // data source
                         'cluster': true, // whether enable clustering
-                        'clustermaxzoom': 20, // max zoom level for clustering
-                        'clusterradius': 20, // radius of clusters
-                        'unclusteredid': 'unclustered', // layer id
-                        'unclusteredtype': 'symbol', // symbology type
-                        'unclusteredvisibility': 'visible', // visibility of the layer
-                        'unclusteredoverlap': true, // icon allow overlap
-                        'unclusteredopacity': 1, // icon opacity
-                        'unclusteredsize': 0.07, // icon radius
-                        'unclusteredrotate': ['get', 'bearing'], // icon rotate
-                        'unclusteredoutlinecolor': 'rgba(255,255,255,0)',  // outline color; for legend purpose only
-                        'clusteredid': 'clustered', // layer id
-                        'clusteredtype': 'circle', // symbology type
-                        'clusteredvisibility': 'visible', // visibility of the layer
-                        'clusteredcolor': ['step', ['get', 'point_count'], '#ffcd03', 5, '#a3cf62', 10, '#00a9a5'], // color for each category; use rgba
-                        'clusteredopacity': 1, // circle opacity
-                        'clusteredradius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40], // circle radius; change size based on point counts
-                        'clusteredstrokecolor': 'rgb(255,255,255)', // circle stroke color
-                        'clusteredstrokeopacity': 1, // circle stroke opacity
-                        'clusteredstrokewidth': 0, // circle stroke width
-                        'clusteredoutlinecolor': 'rgba(255,255,255,0)',  // outline color; for legend purpose only
-                        'clusterlabelid': 'clusterlabel',
-                        'clusterlabeltype': 'symbol', // symbology type
-                        'clusterlabelvisibility': 'visible', // visibility of the layer
-                        'clusterlabeloverlap': true, // text allow overlap
-                        'clusterlabeltextfield': ['get', 'point_count_abbreviated'], // text for the cluster label
-                        'clusterlabeltextfont': ['Open Sans Semibold', 'Arial Unicode MS Bold'], // text font for the cluster label
-                        'clusterlabeltextsize': 14, // text size for the cluster label
+                        'clusterMaxZoom': 22, // max zoom level for clustering
+                        'clusterRadius': 20, // radius of clusters
+                        'unclusteredId': 'unclustered', // layer id
+                        'unclusteredType': 'symbol', // symbology type
+                        'unclusteredVisibility': 'visible', // visibility of the layer
+                        'unclusteredOverlap': true, // icon allow overlap
+                        'unclusteredOpacity': 1, // icon opacity
+                        'unclusteredSize': 0.07, // icon radius
+                        'unclusteredRotate': ['get', 'bearing'], // icon rotate
+                        'unclusteredOutlineColor': 'rgba(255,255,255,0)',  // outline color; for legend purpose only
+                        'clusteredId': 'clustered', // layer id
+                        'clusteredType': 'circle', // symbology type
+                        'clusteredVisibility': 'visible', // visibility of the layer
+                        'clusteredColor': ['step', ['get', 'point_count'], '#ffcd03', 5, '#a3cf62', 10, '#00a9a5'], // color for each category; use rgba
+                        'clusteredOpacity': 1, // circle opacity
+                        'clusteredRadius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40], // circle radius; change size based on point counts
+                        'clusteredStrokeColor': 'rgb(255,255,255)', // circle stroke color
+                        'clusteredStrokeOpacity': 1, // circle stroke opacity
+                        'clusteredStrokeWidth': 0, // circle stroke width
+                        'clusteredOutlineColor': 'rgba(255,255,255,0)',  // outline color; for legend purpose only
+                        'clusterLabelId': 'clusterlabel',
+                        'clusterLabelType': 'symbol', // symbology type
+                        'clusterLabelVisibility': 'visible', // visibility of the layer
+                        'clusterLabelOverlap': true, // text allow overlap
+                        'clusterLabelTextField': ['get', 'point_count_abbreviated'], // text for the cluster label
+                        'clusterLabelTextFont': ['Open Sans Semibold', 'Arial Unicode MS Bold'], // text font for the cluster label
+                        'clusterLabelTextSize': 14, // text size for the cluster label
                     };
 
                     // Add layer content to the overall layer content list
                     layerContentList.push(layerContent);
 
                     // Add data source
-                    map.addSource(layerContent['sourceid'], {
-                        'type': layerContent['sourcetype'],
-                        'data': layerContent['sourcedata'],
+                    map.addSource(layerContent['sourceId'], {
+                        'type': layerContent['sourceType'],
+                        'data': layerContent['sourceData'],
                         'cluster': layerContent['cluster'],
-                        'clusterMaxZoom': layerContent['clustermaxzoom'],
-                        'clusterRadius': layerContent['clusterradius'],
+                        'clusterMaxZoom': layerContent['clusterMaxZoom'],
+                        'clusterRadius': layerContent['clusterRadius'],
                     });
 
                     // Add clustered circle layer
                     map.addLayer({
-                        'id': layerContent['clusteredid'],
-                        'type': layerContent['clusteredtype'],
-                        'source': layerContent['sourceid'],
+                        'id': layerContent['clusteredId'],
+                        'type': layerContent['clusteredType'],
+                        'source': layerContent['sourceId'],
                         'filter': ['has', 'point_count'],
                         'layout': {
-                            'visibility': layerContent['clusteredvisibility'],
+                            'visibility': layerContent['clusteredVisibility'],
                         },
                         'paint': {
-                            'circle-color': layerContent['clusteredcolor'],
-                            'circle-opacity': layerContent['clusteredopacity'],
-                            'circle-radius': layerContent['clusteredradius'],
-                            'circle-stroke-color': layerContent['clusteredstrokecolor'],
-                            'circle-stroke-opacity': layerContent['clusteredstrokeopacity'],
-                            'circle-stroke-width': layerContent['clusteredstrokewidth'],
+                            'circle-color': layerContent['clusteredColor'],
+                            'circle-opacity': layerContent['clusteredOpacity'],
+                            'circle-radius': layerContent['clusteredRadius'],
+                            'circle-stroke-color': layerContent['clusteredStrokeColor'],
+                            'circle-stroke-opacity': layerContent['clusteredStrokeOpacity'],
+                            'circle-stroke-width': layerContent['clusteredStrokeWidth'],
                         },
                     });
 
                     // Add clustered label layer
                     map.addLayer({
-                        'id': layerContent['clusterlabelid'],
-                        'type': layerContent['clusterlabeltype'],
-                        'source': layerContent['sourceid'],
+                        'id': layerContent['clusterLabelId'],
+                        'type': layerContent['clusterLabelType'],
+                        'source': layerContent['sourceId'],
                         'filter': ['has', 'point_count'],
                         'layout': {
-                            'visibility': layerContent['clusterlabelvisibility'],
-                            'text-allow-overlap': layerContent['clusterlabeloverlap'],
-                            'text-field': layerContent['clusterlabeltextfield'],
-                            'text-font': layerContent['clusterlabeltextfont'],
-                            'text-size': layerContent['clusterlabeltextsize'],
+                            'visibility': layerContent['clusterLabelVisibility'],
+                            'text-allow-overlap': layerContent['clusterLabelOverlap'],
+                            'text-field': layerContent['clusterLabelTextField'],
+                            'text-font': layerContent['clusterLabelTextFont'],
+                            'text-size': layerContent['clusterLabelTextSize'],
                         },
                     });
 
                     // Add unclustered circle layer
                     map.addLayer({
-                        'id': layerContent['unclusteredid'],
-                        'type': layerContent['unclusteredtype'],
-                        'source': layerContent['sourceid'],
+                        'id': layerContent['unclusteredId'],
+                        'type': layerContent['unclusteredType'],
+                        'source': layerContent['sourceId'],
                         'filter': ['!', ['has', 'point_count']],
                         'layout': {
-                            'visibility': layerContent['unclusteredvisibility'],
-                            'icon-allow-overlap': layerContent['unclusteredoverlap'],
-                            'icon-image': 'dirarrow',
-                            'icon-size': layerContent['unclusteredsize'],
-                            'icon-rotate': layerContent['unclusteredrotate'],
+                            'visibility': layerContent['unclusteredVisibility'],
+                            'icon-allow-overlap': layerContent['unclusteredOverlap'],
+                            'icon-image': 'dirArrow',
+                            'icon-size': layerContent['unclusteredSize'],
+                            'icon-rotate': layerContent['unclusteredRotate'],
                         },
                         'paint': {
-                            'icon-opacity': layerContent['unclusteredopacity'],
+                            'icon-opacity': layerContent['unclusteredOpacity'],
                         },
                     });
 
 
                     // Click on a cluster
                     map.on('click', 'clustered', (e) => {
-                        if (map.getZoom() < 19) {
+                        if (map.getZoom() < 1) {
                             let features = map.queryRenderedFeatures(e.point, {
                                 layers: ['clustered'],
                             });
                             let clusterId = features[0].properties.cluster_id;
-                            map.getSource('ptsource').getClusterExpansionZoom(
+                            map.getSource('photoattr').getClusterExpansionZoom(
                                 clusterId,
                                 (err, zoom) => {
                                     if (err) return;
@@ -207,7 +207,7 @@
                             let spiderifier = new MapboxglSpiderifier(map, {
                                 initializeLeg: function (spiderLeg) {
                                     // Add popup
-                                    let spiderpopup = new mapboxgl.Popup({
+                                    let spiderPopup = new mapboxgl.Popup({
                                         closeButton: true, // close button
                                         closeOnClick: true, // close if click on map
                                         closeOnMove: false, // close if move the map
@@ -218,8 +218,14 @@
                                     let description = "<b>Photo ID: </b><span>" + spiderLeg.feature.photo + "</span><br>"; // description in the popup
                                     description += "<b>Datetime: </b><span>" + spiderLeg.feature.datetime + "</span><br>";
                                     description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "' width=300rem>";
-                                    spiderpopup.setHTML(description);
-                                    spiderLeg.mapboxMarker.setPopup(spiderpopup);
+                                    spiderPopup.setHTML(description);
+                                    spiderLeg.mapboxMarker.setPopup(spiderPopup);
+                                    // Unspiderfy if zoomed with no popup opened
+                                    map.on('zoom', () => {
+                                        if (document.getElementsByClassName('mapboxgl-popup-content').length == 0) {
+                                            spiderifier.unspiderfy();
+                                        };
+                                    });
                                 }
                             });
                             spiderifier.unspiderfy();
@@ -228,7 +234,7 @@
                                 layers: ['clustered'],
                             });
                             let clusterId = features[0].properties.cluster_id;
-                            map.getSource('ptsource').getClusterLeaves(
+                            map.getSource('photoattr').getClusterLeaves(
                                 clusterId, 100, 0,
                                 (err, leaves) => {
                                     if (err) return;
@@ -239,15 +245,6 @@
                                     spiderifier.spiderfy(features[0].geometry.coordinates, markers);
                                 }
                             );
-
-                            // //unspiderfy when zoom out
-                            // map.on('click', (e) => {
-                            //     let features = map.queryRenderedFeatures(e.point, {
-                            //         layers: ['clustered','unclustered'],
-                            //     });
-                            //     console.log(features);
-                            //     // spiderifier.unspiderfy();
-                            // })
                         };
                     });
                     // Add hover events
@@ -272,10 +269,10 @@
                     });
                     // Add click event
                     function clickOnMap(e) {
-                        map.easeTo({
-                            center: [e.features[0].geometry.coordinates[0], e.features[0].geometry.coordinates[1] + 0.0003],
-                            zoom: 18,
-                        });
+                        // map.easeTo({
+                        //     center: [e.features[0].geometry.coordinates[0], e.features[0].geometry.coordinates[1] + 0.0003],
+                        //     zoom: 18,
+                        // });
                         let coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
                         let description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
@@ -292,10 +289,6 @@
                     });
                 });
         });
-
-
-
-
     </script>
 </body>
 
