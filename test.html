@@ -28,27 +28,14 @@
         }
 
         .spiderpin {
-            /* position: relative;
-            width: 2rem;
+            position: relative;
+            width: 1rem;
             height: 1.168rem;
             margin-left: -0.44rem;
             margin-top: -0.55rem;
             background-image: url("https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/icon.png");
             background-size: 1rem 1.168rem;
             background-repeat: no-repeat;
-            background-color: white;
-            z-index: 1000; */
-
-            position: relative;
-            width: 20.2px;
-            height: 23.6px;
-            margin-left: -10.1px;
-            margin-top: -11.8px;
-            background-image: url("https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/icon.png");
-            background-size: 20.2px 23.6px;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-color: green;
         }
     </style>
 </head>
@@ -73,10 +60,10 @@
             zoom: 11, // set the initial zoom of the map view
         });
 
-        // // Auto fitting to the bounds
-        // fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson')
-        //     .then((response) => response.json())
-        //     .then((data) => map.fitBounds(turf.bbox(data), { padding: 100 }));
+        // Auto fitting to the bounds
+        fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson')
+            .then((response) => response.json())
+            .then((data) => map.fitBounds(turf.bbox(data), { padding: 100 }));
 
 
         // Add layers
@@ -143,6 +130,15 @@
                         'clusterLabelTextField': ['get', 'point_count_abbreviated'], // text for the cluster label
                         'clusterLabelTextFont': ['Open Sans Semibold', 'Arial Unicode MS Bold'], // text font for the cluster label
                         'clusterLabelTextSize': 14, // text size for the cluster label
+                        'clusterPointId': 'clusterpoint',
+                        'clusterPointType': 'circle', // symbology type
+                        'clusterPointVisibility': 'visible', // visibility of the layer
+                        'clusterPointColor': '#ffcd03',
+                        'clusterPointOpacity': 1, // circle opacity
+                        'clusterPointRadius': 5,
+                        'clusterPointStrokeColor': 'rgb(255,255,255)', // circle stroke color
+                        'clusterPointStrokeOpacity': 1, // circle stroke opacity
+                        'clusterPointStrokeWidth': 0, // circle stroke width
                     };
 
                     // Add layer content to the overall layer content list
@@ -155,6 +151,25 @@
                         'cluster': layerContent['cluster'],
                         'clusterMaxZoom': layerContent['clusterMaxZoom'],
                         'clusterRadius': layerContent['clusterRadius'],
+                    });
+
+                    // Add clustered point layer
+                    map.addLayer({
+                        'id': layerContent['clusterPointId'],
+                        'type': layerContent['clusterPointType'],
+                        'source': layerContent['sourceId'],
+                        'filter': ['has', 'point_count'],
+                        'layout': {
+                            'visibility': layerContent['clusterPointVisibility'],
+                        },
+                        'paint': {
+                            'circle-color': layerContent['clusterPointColor'],
+                            'circle-opacity': layerContent['clusterPointOpacity'],
+                            'circle-radius': layerContent['clusterPointRadius'],
+                            'circle-stroke-color': layerContent['clusterPointStrokeColor'],
+                            'circle-stroke-opacity': layerContent['clusterPointStrokeOpacity'],
+                            'circle-stroke-width': layerContent['clusterPointStrokeWidth'],
+                        },
                     });
 
                     // Add clustered circle layer
@@ -191,7 +206,7 @@
                         },
                     });
 
-                    // Add unclustered circle layer
+                    // Add unclustered layer
                     map.addLayer({
                         'id': layerContent['unclusteredId'],
                         'type': layerContent['unclusteredType'],
@@ -212,23 +227,20 @@
 
                     // Click on a cluster
                     map.on('click', 'clustered', (e) => {
-                        if (map.getZoom() < 19) {
-                            let features = map.queryRenderedFeatures(e.point, {
-                                layers: ['clustered'],
-                            });
-                            let clusterId = features[0].properties.cluster_id;
-                            console.log(clusterId);
-                            map.getSource('photoattr').getClusterExpansionZoom(
-                                clusterId,
-                                (err, zoom) => {
-                                    if (err) return;
-                                    map.easeTo({
-                                        center: features[0].geometry.coordinates,
-                                        zoom: zoom,
-                                    });
-                                },
-                            );
-                        };
+                        let features = map.queryRenderedFeatures(e.point, {
+                            layers: ['clustered'],
+                        });
+                        let clusterId = features[0].properties.cluster_id;
+                        map.getSource('photoattr').getClusterExpansionZoom(
+                            clusterId,
+                            (err, zoom) => {
+                                if (err) return;
+                                map.easeTo({
+                                    center: features[0].geometry.coordinates,
+                                    zoom: zoom,
+                                });
+                            },
+                        );
                     });
                     // Add hover events
                     map.on('mouseenter', 'clustered', () => {
@@ -239,20 +251,27 @@
                     });
 
 
+                    // Create function to convert degree to direction
+                    function degree2Direction(angle) {
+                        const directions = ['N ↑', 'NE ↗', 'E →', 'SE ↘', 'S ↓', 'SW ↙', 'W ←', 'NW ↖'];
+                        return directions[Math.round(angle / 45) % 8];
+                    }
 
 
-
-                    // Unspiderfy if zoomed with no popup opened
-                    map.on('zoom', () => {
-                        const boxes = Array.from(document.getElementsByClassName('spider-leg-container'));
-                        boxes.forEach(box => {
-                            box.remove();
+                    // Spiderfy if zoomed
+                    map.on('move', () => {
+                        const spiders = Array.from(document.getElementsByClassName('spider-leg-container'));
+                        spiders.forEach(spider => {
+                            spider.remove();
                         });
-                        if (map.getZoom() > 17) {
+                        if (map.getZoom() > 18) {
+                            map.setLayoutProperty('clustered', 'visibility', 'none');
+                            map.setLayoutProperty('clusterlabel', 'visibility', 'none');
                             let features = map.queryRenderedFeatures({
-                                layers: ['clustered'],
+                                layers: ['clusterpoint'],
                             });
                             for (let i = 0; i < features.length; i++) {
+                                // Create spiderifier
                                 let spiderifier = new MapboxglSpiderifier(map, {
                                     circleSpiralSwitchover: 9,
                                     initializeLeg: function (spiderLeg) {
@@ -260,7 +279,6 @@
                                         let spiderPin = spiderLeg.elements.pin;
                                         spiderPin.className = 'spiderpin';
                                         spiderPin.style.transform = 'rotate(' + spiderLeg.feature.bearing + 'deg)';
-
                                         // Add popup
                                         let spiderPopup = new mapboxgl.Popup({
                                             closeButton: true, // close button
@@ -272,12 +290,13 @@
                                         });
                                         let description = "<b>Photo ID: </b><span>" + spiderLeg.feature.photo + "</span><br>"; // description in the popup
                                         description += "<b>Datetime: </b><span>" + spiderLeg.feature.datetime + "</span><br>";
+                                        description += "<b>Direction: </b><span>" + degree2Direction(spiderLeg.feature.bearing) + "</span><br>";
                                         description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "' width=300rem>";
                                         spiderPopup.setHTML(description);
                                         spiderLeg.mapboxMarker.setPopup(spiderPopup);
                                     },
                                 });
-
+                                // Apply spiderifier
                                 let clusterId = features[i].properties.cluster_id;
                                 map.getSource('photoattr').getClusterLeaves(
                                     clusterId, 100, 0,
@@ -291,9 +310,11 @@
                                     }
                                 );
                             };
+                        } else {
+                            map.setLayoutProperty('clustered', 'visibility', 'visible');
+                            map.setLayoutProperty('clusterlabel', 'visibility', 'visible');
                         };
                     });
-
 
 
                     // Add unclustered popup
@@ -308,13 +329,10 @@
                     });
                     // Add click event
                     function clickOnMap(e) {
-                        // map.easeTo({
-                        //     center: [e.features[0].geometry.coordinates[0], e.features[0].geometry.coordinates[1] + 0.0003],
-                        //     zoom: 18,
-                        // });
                         let coordinates = e.features[0].geometry.coordinates.slice(); // get point coordinates
                         let description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
+                        description += "<b>Direction: </b><span>" + degree2Direction(e.features[0].properties.bearing) + "</span><br>";
                         description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>";
                         popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
                     }
