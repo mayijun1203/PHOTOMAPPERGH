@@ -61,5 +61,5 @@ df.to_file(path+'photoattr.geojson',crs=4326, driver='GeoJSON')
 for i in os.listdir(path+'original'):
     tp=PIL.Image.open(path+'original/'+i)
     tp.save(path+'photo/'+i,optimize=True,quality=30)
-    
-    
+
+
