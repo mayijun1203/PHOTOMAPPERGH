@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Visualizer</title>
+    <title>Photo Mapper</title>
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css' rel='stylesheet' />
@@ -33,7 +33,7 @@
             height: 1.168rem;
             margin-left: -0.44rem;
             margin-top: -0.55rem;
-            background-image: url("https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/icon.png");
+            background-image: url("https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/icon.png");
             background-size: 1rem 1.168rem;
             background-repeat: no-repeat;
         }
@@ -61,7 +61,7 @@
         });
 
         // Auto fitting to the bounds
-        fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson')
+        fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photoattr.geojson')
             .then((response) => response.json())
             .then((data) => map.fitBounds(turf.bbox(data), { padding: 100 }));
 
@@ -69,7 +69,7 @@
         // Add layers
         map.on('load', function () {
             map.loadImage(
-                'https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/icon.png',
+                'https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/icon.png',
                 (error, image) => {
                     if (error) throw error;
 
@@ -101,7 +101,7 @@
                     const layerContent = {
                         'sourceId': 'photoattr', // source id
                         'sourceType': 'geojson', // source type
-                        'sourceData': 'https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson', // data source
+                        'sourceData': 'https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photoattr.geojson', // data source
                         'cluster': true, // whether enable clustering
                         'clusterMaxZoom': 22, // max zoom level for clustering
                         'clusterRadius': 20, // radius of clusters
@@ -291,7 +291,7 @@
                                         let description = "<b>Photo ID: </b><span>" + spiderLeg.feature.photo + "</span><br>"; // description in the popup
                                         description += "<b>Datetime: </b><span>" + spiderLeg.feature.datetime + "</span><br>";
                                         description += "<b>Direction: </b><span>" + degree2Direction(spiderLeg.feature.bearing) + "</span><br>";
-                                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + spiderLeg.feature.photo + "' width=300rem>";
+                                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + spiderLeg.feature.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + spiderLeg.feature.photo + "' width=300rem>";
                                         spiderPopup.setHTML(description);
                                         spiderLeg.mapboxMarker.setPopup(spiderPopup);
                                     },
@@ -333,7 +333,7 @@
                         let description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
                         description += "<b>Direction: </b><span>" + degree2Direction(e.features[0].properties.bearing) + "</span><br>";
-                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>";
+                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>";
                         popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
                     }
                     map.on('click', 'unclustered', clickOnMap);
