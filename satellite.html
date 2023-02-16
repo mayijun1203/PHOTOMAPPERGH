@@ -51,23 +51,15 @@
             height: auto;
         }
 
-        #satellite {
-            display: none;
-            width: 5rem;
-            height: 5rem;
-            background-image: url("satellite.png");
-            background-size: 5rem 5rem;
-            background-repeat: no-repeat;
-        }
-
         #light {
             width: 4rem;
             height: 4rem;
-            background-image: url("light.png");
-            background-size: 5rem 5rem;
-            background-repeat: no-repeat;
             box-shadow: 0 0 0 2px rgba(255, 255, 255, 100);
             border-radius: 4px;
+        }
+
+        #light:hover {
+            box-shadow: 0 0 0 2px rgba(200, 200, 200, 100);
         }
     </style>
 </head>
@@ -78,12 +70,7 @@
     <div class="container-fluid p-0" id="basemap">
         <div class="row justify-content-center align-items-center">
             <div class="col-auto">
-                <button type="button" class="btn btn-primary" id="satellite"></button>
-            </div>
-        </div>
-        <div class="row justify-content-center align-items-center">
-            <div class="col-auto">
-                <div id="light"></div>
+                <a href="https://mayijun1203.github.io/PHOTOVIZGH/light.html"><img src="https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/light.png" id="light"></a>
             </div>
         </div>
     </div>
@@ -98,8 +85,7 @@
         const map = new mapboxgl.Map({ // creating a new map
             container: 'mainmap', // same as the div id to place the map
             maxZoom: 22, // max zoom levl
-            style: 'mapbox://styles/mapbox/light-v11', // light base map
-            // style: 'mapbox://styles/mapbox/satellite-streets-v12', // satelilite base map
+            style: 'mapbox://styles/mapbox/satellite-streets-v12', // satelilite base map
             hash: true, // make sure it's on to get the url with map view
             preserveDrawingBuffer: true, // make sure it's on to allow printing
             center: [119.655953, 29.093875], // testing to get the centroid of bounds
