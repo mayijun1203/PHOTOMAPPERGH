@@ -70,7 +70,9 @@
     <div class="container-fluid p-0" id="basemap">
         <div class="row justify-content-center align-items-center">
             <div class="col-auto">
-                <a href="https://mayijun1203.github.io/PHOTOVIZGH/satellite.html"><img src="https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/satellite.png" id="satellite"></a>
+                <a href="https://mayijun1203.github.io/PHOTOVIZGH/satellite.html" id="maplink"><img
+                        src="https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/satellite.png"
+                        id="satellite"></a>
             </div>
         </div>
     </div>
@@ -92,10 +94,10 @@
             zoom: 11, // set the initial zoom of the map view
         });
 
-        // Auto fitting to the bounds
-        fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson')
-            .then((response) => response.json())
-            .then((data) => map.fitBounds(turf.bbox(data), { padding: 100 }));
+        // // Auto fitting to the bounds
+        // fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOVIZGH/main/photoattr.geojson')
+        //     .then((response) => response.json())
+        //     .then((data) => map.fitBounds(turf.bbox(data), { padding: 100 }));
 
 
         // Add layers
@@ -347,6 +349,13 @@
                             map.setLayoutProperty('clusterlabel', 'visibility', 'visible');
                         };
                     });
+
+
+                    // Change basemap switch link to current view
+                    map.on('moveend', () => {
+                        document.getElementById('maplink').href = window.location.href.replace('light', 'satellite');
+                    });
+
 
 
                     // Add unclustered popup
