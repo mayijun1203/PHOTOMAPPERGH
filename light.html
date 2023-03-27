@@ -352,7 +352,7 @@
 
 
                     // Change basemap switch link to current view
-                    map.on('moveend', () => {
+                    map.on('render', () => {
                         document.getElementById('maplink').href = window.location.href.replace('light', 'satellite');
                     });
 
