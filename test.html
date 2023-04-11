@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Mapper</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css' rel='stylesheet' />
     <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
@@ -37,11 +42,40 @@
             background-size: 1rem 1.168rem;
             background-repeat: no-repeat;
         }
+
+        #basemap {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            width: auto;
+            height: auto;
+        }
+
+        #satellite {
+            width: 4rem;
+            height: 4rem;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 100);
+            border-radius: 4px;
+        }
+
+        #satellite:hover {
+            box-shadow: 0 0 0 2px rgba(200, 200, 200, 100);
+        }
     </style>
 </head>
 
 <body>
     <div class="container-fluid p-0" id="mainmap"> </div> <!-- placeholder for main map -->
+
+    <div class="container-fluid p-0" id="basemap">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-auto">
+                <a href="satellite.html" id="maplink"><img
+                        src="https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/satellite.png"
+                        id="satellite"></a>
+            </div>
+        </div>
+    </div>
 
     <script>
         'use strict';
@@ -53,17 +87,18 @@
         const map = new mapboxgl.Map({ // creating a new map
             container: 'mainmap', // same as the div id to place the map
             maxZoom: 22, // max zoom levl
-            style: 'mapbox://styles/mapbox/light-v10', // light base map
+            style: 'mapbox://styles/mapbox/light-v11', // light base map
             hash: true, // make sure it's on to get the url with map view
+            attributionControl: false, // show the credit bar
             preserveDrawingBuffer: true, // make sure it's on to allow printing
             center: [119.655953, 29.093875], // testing to get the centroid of bounds
             zoom: 11, // set the initial zoom of the map view
         });
 
-        // Auto fitting to the bounds
-        fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photoattr.geojson')
-            .then((response) => response.json())
-            .then((data) => map.fitBounds(turf.bbox(data), { padding: 100 }));
+        // // Auto fitting to the bounds
+        // fetch('https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photoattr.geojson')
+        //     .then((response) => response.json())
+        //     .then((data) => map.fitBounds(turf.bbox(data), { padding: 100 }));
 
 
         // Add layers
@@ -101,7 +136,7 @@
                     const layerContent = {
                         'sourceId': 'photoattr', // source id
                         'sourceType': 'geojson', // source type
-                        'sourceData': 'https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photoattr.geojson', // data source
+                        'sourceData': 'photoattr.geojson', // data source
                         'cluster': true, // whether enable clustering
                         'clusterMaxZoom': 22, // max zoom level for clustering
                         'clusterRadius': 20, // radius of clusters
@@ -291,7 +326,7 @@
                                         let description = "<b>Photo ID: </b><span>" + spiderLeg.feature.photo + "</span><br>"; // description in the popup
                                         description += "<b>Datetime: </b><span>" + spiderLeg.feature.datetime + "</span><br>";
                                         description += "<b>Direction: </b><span>" + degree2Direction(spiderLeg.feature.bearing) + "</span><br>";
-                                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + spiderLeg.feature.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + spiderLeg.feature.photo + "' width=300rem>";
+                                        description += "<a target='_blank' href='photo/" + spiderLeg.feature.photo + "'><img src='photo/" + spiderLeg.feature.photo + "' width=300rem>";
                                         spiderPopup.setHTML(description);
                                         spiderLeg.mapboxMarker.setPopup(spiderPopup);
                                     },
@@ -317,6 +352,13 @@
                     });
 
 
+                    // Change basemap switch link to current view
+                    map.on('render', () => {
+                        document.getElementById('maplink').href = window.location.href.replace('light', 'satellite');
+                    });
+
+
+
                     // Add unclustered popup
                     // Add popup
                     let popup = new mapboxgl.Popup({
@@ -333,7 +375,7 @@
                         let description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
                         description += "<b>Direction: </b><span>" + degree2Direction(e.features[0].properties.bearing) + "</span><br>";
-                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>";
+                        description += "<a target='_blank' href='photo/" + e.features[0].properties.photo + "'><img src='photo/" + e.features[0].properties.photo + "' width=300rem>";
                         popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
                     }
                     map.on('click', 'unclustered', clickOnMap);

@@ -74,7 +74,7 @@
     <div class="container-fluid p-0" id="basemap">
         <div class="row justify-content-center align-items-center">
             <div class="col-auto">
-                <a href="https://mayijun1203.github.io/PHOTOMAPPERGH/light.html" id="maplink"><img
+                <a href="light.html" id="maplink"><img
                         src="https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/light.png" id="light"></a>
             </div>
         </div>
@@ -139,7 +139,7 @@
                     const layerContent = {
                         'sourceId': 'photoattr', // source id
                         'sourceType': 'geojson', // source type
-                        'sourceData': 'https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photoattr.geojson', // data source
+                        'sourceData': 'photoattr.geojson', // data source
                         'cluster': true, // whether enable clustering
                         'clusterMaxZoom': 22, // max zoom level for clustering
                         'clusterRadius': 20, // radius of clusters
@@ -329,7 +329,7 @@
                                         let description = "<b>Photo ID: </b><span>" + spiderLeg.feature.photo + "</span><br>"; // description in the popup
                                         description += "<b>Datetime: </b><span>" + spiderLeg.feature.datetime + "</span><br>";
                                         description += "<b>Direction: </b><span>" + degree2Direction(spiderLeg.feature.bearing) + "</span><br>";
-                                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + spiderLeg.feature.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + spiderLeg.feature.photo + "' width=300rem>";
+                                        description += "<a target='_blank' href='photo/" + spiderLeg.feature.photo + "'><img src='photo/" + spiderLeg.feature.photo + "' width=300rem>";
                                         spiderPopup.setHTML(description);
                                         spiderLeg.mapboxMarker.setPopup(spiderPopup);
                                     },
@@ -377,7 +377,7 @@
                         let description = "<b>Photo ID: </b><span>" + e.features[0].properties.photo + "</span><br>"; // description in the popup
                         description += "<b>Datetime: </b><span>" + e.features[0].properties.datetime + "</span><br>";
                         description += "<b>Direction: </b><span>" + degree2Direction(e.features[0].properties.bearing) + "</span><br>";
-                        description += "<a target='_blank' href='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + e.features[0].properties.photo + "'><img src='https://raw.githubusercontent.com/mayijun1203/PHOTOMAPPERGH/main/photo/" + e.features[0].properties.photo + "' width=300rem>";
+                        description += "<a target='_blank' href='photo/" + e.features[0].properties.photo + "'><img src='photo/" + e.features[0].properties.photo + "' width=300rem>";
                         popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
                     }
                     map.on('click', 'unclustered', clickOnMap);
